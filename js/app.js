@@ -13,9 +13,9 @@ function sendMail(e) {
 }
 
 // State
-let answers = { had: {}, odi: {}, tsk: {} };
-let questionnaireOrder = ['had', 'odi', 'tsk'];
-let currentQuestionnaire = 0;   // 0=HAD, 1=ODI, 2=TSK
+let answers = { eva: {}, had: {}, odi: {}, tsk: {} };
+let questionnaireOrder = ['eva', 'had', 'odi', 'tsk'];
+let currentQuestionnaire = 0;   // 0=EVA, 1=HAD, 2=ODI, 3=TSK
 let currentQuestionIndex = 0;
 
 // ===== NAVIGATION =====
@@ -38,13 +38,13 @@ function selectLanguage(lang) {
 function startQuestionnaires() {
     currentQuestionnaire = 0;
     currentQuestionIndex = 0;
-    answers = { had: {}, odi: {}, tsk: {} };
+    answers = { eva: {}, had: {}, odi: {}, tsk: {} };
     showScreen('screen-questionnaire');
     renderCurrentQuestion();
 }
 
 function newEvaluation() {
-    answers = { had: {}, odi: {}, tsk: {} };
+    answers = { eva: {}, had: {}, odi: {}, tsk: {} };
     currentQuestionnaire = 0;
     currentQuestionIndex = 0;
     showScreen('screen-welcome');
@@ -99,7 +99,9 @@ function renderCurrentQuestion() {
     // Content
     const content = document.getElementById('q-content');
 
-    if (qType === 'had') {
+    if (qType === 'eva') {
+        renderEVAQuestion(content, item, currentQuestionIndex);
+    } else if (qType === 'had') {
         renderHADQuestion(content, item, currentQuestionIndex);
     } else if (qType === 'odi') {
         renderODIQuestion(content, item, currentQuestionIndex);
@@ -116,6 +118,59 @@ function renderCurrentQuestion() {
     document.getElementById('btn-next').textContent = isLast ? (currentLang === 'fr' ? 'Terminer ✓' : 'Beenden ✓') : t('btn_next');
 
     updateNextButton();
+}
+
+// EVA (eVAS — validated continuous slider, 0-100)
+function renderEVAQuestion(container, item, idx) {
+    const currentVal = answers.eva[item.id];
+    const hasValue = currentVal !== undefined;
+
+    container.innerHTML = `
+        <p class="question-text eva-instruction">${t('eva_instruction')}</p>
+        <p class="eva-tap-hint">${t('eva_tap_instruction')}</p>
+        <div class="eva-container" id="eva-widget">
+            <div class="eva-track" id="eva-track">
+                <div class="eva-endpoint left"></div>
+                <div class="eva-line">
+                    <div class="eva-fill" id="eva-fill" style="width: ${hasValue ? currentVal : 0}%;"></div>
+                    <div class="eva-marker" id="eva-marker" style="left: ${hasValue ? currentVal : -10}%; ${hasValue ? '' : 'opacity:0;'}"></div>
+                </div>
+                <div class="eva-endpoint right"></div>
+            </div>
+            <div class="eva-anchors">
+                <span class="eva-anchor-text">${t('eva_anchor_left')}</span>
+                <span class="eva-anchor-text">${t('eva_anchor_right')}</span>
+            </div>
+        </div>
+    `;
+
+    // Setup interactive slider
+    const track = document.getElementById('eva-track');
+    const fill = document.getElementById('eva-fill');
+    const marker = document.getElementById('eva-marker');
+
+    function setEVAValue(e) {
+        const line = track.querySelector('.eva-line');
+        const rect = line.getBoundingClientRect();
+        let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        let raw = ((clientX - rect.left) / rect.width) * 100;
+        raw = Math.max(0, Math.min(100, Math.round(raw)));
+
+        fill.style.width = raw + '%';
+        marker.style.left = raw + '%';
+        marker.style.opacity = '1';
+        answers.eva[item.id] = raw;
+        updateNextButton();
+    }
+
+    let dragging = false;
+
+    track.addEventListener('mousedown', (e) => { dragging = true; setEVAValue(e); });
+    track.addEventListener('touchstart', (e) => { dragging = true; setEVAValue(e); }, { passive: true });
+    document.addEventListener('mousemove', (e) => { if (dragging) setEVAValue(e); });
+    document.addEventListener('touchmove', (e) => { if (dragging) setEVAValue(e); }, { passive: true });
+    document.addEventListener('mouseup', () => { dragging = false; });
+    document.addEventListener('touchend', () => { dragging = false; });
 }
 
 // HAD
@@ -254,6 +309,9 @@ function calculateAllScores() {
     const lang = currentLang;
     const data = QUESTIONNAIRES[lang];
 
+    // EVA
+    const evaValue = answers.eva['eva1'] !== undefined ? answers.eva['eva1'] : null;
+
     // HAD
     let anxietyScore = 0, depressionScore = 0;
     data.had.forEach(item => {
@@ -287,6 +345,10 @@ function calculateAllScores() {
     });
 
     return {
+        eva: {
+            value: evaValue,
+            level: getEVALevel(evaValue)
+        },
         had: {
             anxiety: anxietyScore,
             depression: depressionScore,
@@ -315,6 +377,15 @@ function getHADLevel(type, score) {
     if (score <= 10) return { key: 'mild', label: t(prefix + 'mild'), desc: t(prefix + 'mild_desc'), color: 'orange' };
     if (score <= 14) return { key: 'moderate', label: t(prefix + 'moderate'), desc: t(prefix + 'moderate_desc'), color: 'orange' };
     return { key: 'severe', label: t(prefix + 'severe'), desc: t(prefix + 'severe_desc'), color: 'red' };
+}
+
+function getEVALevel(value) {
+    if (value === null) return { label: '-', desc: '-', color: 'green' };
+    if (value <= 10) return { label: t('eva_no_pain'), desc: t('eva_no_pain_desc'), color: 'green' };
+    if (value <= 30) return { label: t('eva_mild'), desc: t('eva_mild_desc'), color: 'green' };
+    if (value <= 60) return { label: t('eva_moderate'), desc: t('eva_moderate_desc'), color: 'orange' };
+    if (value <= 80) return { label: t('eva_severe'), desc: t('eva_severe_desc'), color: 'red' };
+    return { label: t('eva_worst'), desc: t('eva_worst_desc'), color: 'red' };
 }
 
 function getODILevel(percent) {

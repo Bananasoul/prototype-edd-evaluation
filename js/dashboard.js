@@ -13,6 +13,7 @@ function renderDashboard() {
 
     renderSummaryCards(scores);
     renderRadarChart(scores);
+    renderEVAChart(scores);
     renderHADCharts(scores);
     renderODIChart(scores);
     renderTSKChart(scores);
@@ -23,7 +24,15 @@ function renderDashboard() {
 function renderSummaryCards(scores) {
     const container = document.getElementById('dash-summary');
 
+    const evaVal = scores.eva.value !== null ? scores.eva.value : '-';
+    const evaUnit = scores.eva.value !== null ? '/100' : '';
+
     container.innerHTML = `
+        <div class="summary-card ${scores.eva.level.color}">
+            <div class="card-label">EVA</div>
+            <div class="card-value">${evaVal}${evaUnit}</div>
+            <div class="card-interp">${scores.eva.level.label}</div>
+        </div>
         <div class="summary-card ${scores.had.anxietyLevel.color}">
             <div class="card-label">HAD-S ${t('anxiety_label')}</div>
             <div class="card-value">${scores.had.anxiety}/21</div>
@@ -53,6 +62,7 @@ function renderRadarChart(scores) {
     const ctx = document.getElementById('chart-radar').getContext('2d');
 
     // Normalize to 0-100 for radar
+    const evaNorm = scores.eva.value !== null ? scores.eva.value : 0;
     const anxNorm = Math.round((scores.had.anxiety / 21) * 100);
     const depNorm = Math.round((scores.had.depression / 21) * 100);
     const odiNorm = scores.odi.percent;
@@ -62,6 +72,7 @@ function renderRadarChart(scores) {
         type: 'radar',
         data: {
             labels: [
+                'EVA',
                 `${t('anxiety_label')} (HAD)`,
                 `${t('depression_label')} (HAD)`,
                 'ODI',
@@ -69,11 +80,12 @@ function renderRadarChart(scores) {
             ],
             datasets: [{
                 label: t('score'),
-                data: [anxNorm, depNorm, odiNorm, tskNorm],
+                data: [evaNorm, anxNorm, depNorm, odiNorm, tskNorm],
                 backgroundColor: 'rgba(27, 58, 92, 0.15)',
                 borderColor: '#1B3A5C',
                 borderWidth: 2,
                 pointBackgroundColor: [
+                    getColorForValue(evaNorm),
                     getColorForValue(anxNorm),
                     getColorForValue(depNorm),
                     getColorForValue(odiNorm),
@@ -107,6 +119,97 @@ function renderRadarChart(scores) {
             }
         }
     });
+}
+
+// ===== EVA CHART =====
+
+function renderEVAChart(scores) {
+    const ctx = document.getElementById('chart-eva').getContext('2d');
+    const val = scores.eva.value !== null ? scores.eva.value : 0;
+
+    const zones = [
+        { label: t('eva_no_pain'), max: 10, color: '#4CAF50' },
+        { label: t('eva_mild'), max: 30, color: '#8BC34A' },
+        { label: t('eva_moderate'), max: 60, color: '#FF9800' },
+        { label: t('eva_severe'), max: 80, color: '#FF5722' },
+        { label: t('eva_worst'), max: 100, color: '#F44336' }
+    ];
+
+    const barColor = zones.find(z => val <= z.max)?.color || '#F44336';
+
+    chartInstances.eva = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['EVA'],
+            datasets: [{
+                label: 'mm',
+                data: [val],
+                backgroundColor: barColor,
+                borderRadius: 8,
+                barThickness: 60
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            scales: {
+                x: {
+                    min: 0,
+                    max: 100,
+                    grid: { display: true, color: '#f1f5f9' },
+                    ticks: {
+                        callback: v => v + ' mm',
+                        font: { size: 11 }
+                    }
+                },
+                y: { display: false }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => `${ctx.raw} mm — ${scores.eva.level.label}`
+                    }
+                }
+            }
+        },
+        plugins: [{
+            id: 'evaZones',
+            beforeDraw(chart) {
+                const { ctx: c, chartArea: { left, right, top, bottom }, scales: { x } } = chart;
+                c.save();
+                zones.forEach(zone => {
+                    const prevMax = zones[zones.indexOf(zone) - 1]?.max || 0;
+                    const x1 = x.getPixelForValue(prevMax);
+                    const x2 = x.getPixelForValue(zone.max);
+                    c.fillStyle = zone.color + '15';
+                    c.fillRect(x1, top, x2 - x1, bottom - top);
+                });
+                c.restore();
+            }
+        }, {
+            id: 'evaValue',
+            afterDraw(chart) {
+                const { ctx: c, chartArea, scales: { x } } = chart;
+                const xPos = x.getPixelForValue(val);
+                const yMid = (chartArea.top + chartArea.bottom) / 2;
+                c.save();
+                c.textAlign = 'center';
+                c.font = 'bold 14px Inter, sans-serif';
+                c.fillStyle = '#fff';
+                c.fillText(`${val} mm`, Math.min(xPos, chartArea.right - 30), yMid + 4);
+                c.restore();
+            }
+        }]
+    });
+
+    // Interpretation
+    const interpBox = document.getElementById('eva-interpretation');
+    interpBox.className = `interpretation-box ${scores.eva.level.color}`;
+    interpBox.innerHTML = `
+        <strong>${scores.eva.level.label} — ${scores.eva.value !== null ? scores.eva.value + '/100 mm' : '-'}</strong>
+        <p>${scores.eva.level.desc}</p>
+    `;
 }
 
 // ===== HAD CHARTS (Doughnut) =====

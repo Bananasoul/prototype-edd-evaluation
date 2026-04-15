@@ -536,6 +536,90 @@ body {
     font-weight: 600;
 }
 
+/* ===== EVA / eVAS SLIDER ===== */
+.eva-instruction {
+    text-align: center;
+    font-size: 1.05rem;
+}
+
+.eva-tap-hint {
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    font-style: italic;
+}
+
+.eva-container {
+    padding: 20px 0;
+}
+
+.eva-track {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    cursor: pointer;
+    padding: 16px 0;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+}
+
+.eva-endpoint {
+    width: 3px;
+    height: 28px;
+    background: var(--primary);
+    border-radius: 1px;
+    flex-shrink: 0;
+}
+
+.eva-line {
+    flex: 1;
+    height: 4px;
+    background: var(--primary);
+    position: relative;
+    border-radius: 2px;
+}
+
+.eva-fill {
+    position: absolute;
+    left: 0;
+    top: -2px;
+    height: 8px;
+    background: linear-gradient(90deg, #4CAF50, #FF9800, #F44336);
+    border-radius: 4px;
+    transition: width 0.05s linear;
+    pointer-events: none;
+}
+
+.eva-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    background: var(--primary);
+    border: 4px solid white;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: left 0.05s linear, opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.eva-anchors {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+
+.eva-anchor-text {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+    max-width: 40%;
+    line-height: 1.3;
+}
+
 /* Skip button */
 .btn-skip {
     display: block;

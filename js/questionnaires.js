@@ -2,6 +2,10 @@
 
 const QUESTIONNAIRES = {
     fr: {
+        eva: [
+            { id: 'eva1', type: 'vas', text: null }
+        ],
+
         had: [
             { id: 'had1', text: "Je me sens tendu(e) ou énervé(e) :", category: 'anxiety', options: [
                 { value: 3, label: "La plupart du temps" }, { value: 2, label: "Souvent" },
@@ -166,6 +170,10 @@ const QUESTIONNAIRES = {
     },
 
     de: {
+        eva: [
+            { id: 'eva1', type: 'vas', text: null }
+        ],
+
         had: [
             { id: 'had1', text: "Ich fühle mich angespannt oder gereizt:", category: 'anxiety', options: [
                 { value: 3, label: "Die meiste Zeit" }, { value: 2, label: "Oft" },

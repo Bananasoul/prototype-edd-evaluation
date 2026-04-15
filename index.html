@@ -46,21 +46,26 @@
                 <div class="progress-global">
                     <div class="progress-step active" data-step="1">
                         <span class="step-dot">1</span>
-                        <span class="step-name" data-i18n="step_had">HAD-S</span>
+                        <span class="step-name" data-i18n="step_eva">EVA</span>
                     </div>
                     <div class="progress-line"></div>
                     <div class="progress-step" data-step="2">
                         <span class="step-dot">2</span>
-                        <span class="step-name" data-i18n="step_odi">ODI</span>
+                        <span class="step-name" data-i18n="step_had">HAD-S</span>
                     </div>
                     <div class="progress-line"></div>
                     <div class="progress-step" data-step="3">
                         <span class="step-dot">3</span>
+                        <span class="step-name" data-i18n="step_odi">ODI</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="4">
+                        <span class="step-dot">4</span>
                         <span class="step-name" data-i18n="step_tsk">TSK</span>
                     </div>
                 </div>
                 <h2 data-i18n="intro_title">Évaluation anonyme</h2>
-                <p class="intro-text" data-i18n="intro_text">Vous allez répondre à 3 questionnaires standardisés. Vos réponses sont anonymes et confidentielles.</p>
+                <p class="intro-text" data-i18n="intro_text">Vous allez répondre à 4 questionnaires standardisés. Vos réponses sont anonymes et confidentielles.</p>
                 <div class="info-box">
                     <div class="info-item">
                         <span class="info-icon">⏱️</span>
@@ -87,16 +92,21 @@
                     <div class="progress-global compact">
                         <div class="progress-step" data-step="1">
                             <span class="step-dot">1</span>
-                            <span class="step-name">HAD-S</span>
+                            <span class="step-name">EVA</span>
                         </div>
                         <div class="progress-line"></div>
                         <div class="progress-step" data-step="2">
                             <span class="step-dot">2</span>
-                            <span class="step-name">ODI</span>
+                            <span class="step-name">HAD-S</span>
                         </div>
                         <div class="progress-line"></div>
                         <div class="progress-step" data-step="3">
                             <span class="step-dot">3</span>
+                            <span class="step-name">ODI</span>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step" data-step="4">
+                            <span class="step-dot">4</span>
                             <span class="step-name">TSK</span>
                         </div>
                     </div>
@@ -161,6 +171,15 @@
                     <div class="chart-container">
                         <canvas id="chart-radar"></canvas>
                     </div>
+                </div>
+
+                <!-- EVA détail -->
+                <div class="dash-section" id="dash-eva">
+                    <h3>EVA — <span data-i18n="dash_eva_title">Échelle Visuelle Analogique</span></h3>
+                    <div class="chart-container small">
+                        <canvas id="chart-eva"></canvas>
+                    </div>
+                    <div id="eva-interpretation" class="interpretation-box"></div>
                 </div>
 
                 <!-- HAD-S détail -->
