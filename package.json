@@ -1,0 +1,10 @@
+{
+  "name": "prototype-edd-evaluation",
+  "version": "1.0.0",
+  "description": "École du Dos - Prototype d'évaluation anonyme HAD / Oswestry / Tampa Scale",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve ."
+  }
+}

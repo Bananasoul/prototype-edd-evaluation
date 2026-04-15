@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>École du Dos — Évaluation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div id="app">
+
+        <!-- ==================== ÉCRAN 1: ACCUEIL / LANGUE ==================== -->
+        <section id="screen-welcome" class="screen active">
+            <div class="card welcome-card">
+                <div class="logo-circle">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4z" fill="#1B3A5C"/>
+                        <path d="M24 14c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 18c-4.42 0-8-1.79-8-4v-2c0-2.21 3.58-4 8-4s8 1.79 8 4v2c0 2.21-3.58 4-8 4z" fill="white"/>
+                    </svg>
+                </div>
+                <h1>École du Dos</h1>
+                <p class="subtitle">Hôpital Saint-Nicolas Eupen</p>
+                <div class="divider"></div>
+                <p class="instruction" id="txt-choose-lang">Choisissez votre langue / Wählen Sie Ihre Sprache</p>
+                <div class="lang-buttons">
+                    <button class="btn-lang" onclick="selectLanguage('fr')">
+                        <span class="flag">🇫🇷</span>
+                        <span>Français</span>
+                    </button>
+                    <button class="btn-lang" onclick="selectLanguage('de')">
+                        <span class="flag">🇩🇪</span>
+                        <span>Deutsch</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ÉCRAN 2: INTRO QUESTIONNAIRES ==================== -->
+        <section id="screen-intro" class="screen">
+            <div class="card">
+                <div class="progress-global">
+                    <div class="progress-step active" data-step="1">
+                        <span class="step-dot">1</span>
+                        <span class="step-name" data-i18n="step_had">HAD-S</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="2">
+                        <span class="step-dot">2</span>
+                        <span class="step-name" data-i18n="step_odi">ODI</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="3">
+                        <span class="step-dot">3</span>
+                        <span class="step-name" data-i18n="step_tsk">TSK</span>
+                    </div>
+                </div>
+                <h2 data-i18n="intro_title">Évaluation anonyme</h2>
+                <p class="intro-text" data-i18n="intro_text">Vous allez répondre à 3 questionnaires standardisés. Vos réponses sont anonymes et confidentielles.</p>
+                <div class="info-box">
+                    <div class="info-item">
+                        <span class="info-icon">⏱️</span>
+                        <span data-i18n="intro_duration">Durée estimée : 15 minutes</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">🔒</span>
+                        <span data-i18n="intro_anonymous">Toutes vos réponses sont anonymes</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📋</span>
+                        <span data-i18n="intro_spontaneous">Répondez spontanément, il n'y a pas de bonne ou mauvaise réponse</span>
+                    </div>
+                </div>
+                <button class="btn-primary full" onclick="startQuestionnaires()" data-i18n="btn_start">Commencer</button>
+            </div>
+        </section>
+
+        <!-- ==================== ÉCRAN 3: QUESTIONNAIRE ==================== -->
+        <section id="screen-questionnaire" class="screen">
+            <div class="card questionnaire-card">
+                <div class="q-header">
+                    <div class="progress-global compact">
+                        <div class="progress-step" data-step="1">
+                            <span class="step-dot">1</span>
+                            <span class="step-name">HAD-S</span>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step" data-step="2">
+                            <span class="step-dot">2</span>
+                            <span class="step-name">ODI</span>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step" data-step="3">
+                            <span class="step-dot">3</span>
+                            <span class="step-name">TSK</span>
+                        </div>
+                    </div>
+                    <h3 id="q-title"></h3>
+                    <p id="q-subtitle" class="q-subtitle"></p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="q-progress"></div>
+                    </div>
+                    <span class="progress-text" id="q-progress-text"></span>
+                </div>
+
+                <div id="q-content" class="q-content">
+                    <!-- Dynamically generated -->
+                </div>
+
+                <div class="q-nav">
+                    <button class="btn-secondary" id="btn-prev" onclick="prevQuestion()" data-i18n="btn_prev">← Précédent</button>
+                    <button class="btn-primary" id="btn-next" onclick="nextQuestion()" disabled data-i18n="btn_next">Suivant →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ÉCRAN 4: MERCI ==================== -->
+        <section id="screen-thanks" class="screen">
+            <div class="card thanks-card">
+                <div class="check-circle">
+                    <svg viewBox="0 0 52 52" fill="none">
+                        <circle cx="26" cy="26" r="25" fill="#4CAF50"/>
+                        <path d="M14 27l7 7 16-16" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h2 data-i18n="thanks_title">Merci !</h2>
+                <p class="thanks-text" data-i18n="thanks_text">Vous avez terminé tous les questionnaires. Vos réponses ont été enregistrées.</p>
+                <p class="thanks-sub" data-i18n="thanks_sub">Vous pouvez maintenant fermer cette page.</p>
+                
+                <div class="thanks-spacer"></div>
+                
+                <button class="btn-link-discrete" onclick="showDashboard()" data-i18n="btn_results">
+                    Accès aux résultats →
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== ÉCRAN 5: DASHBOARD RÉSULTATS ==================== -->
+        <section id="screen-dashboard" class="screen">
+            <div class="dashboard">
+                <div class="dash-header">
+                    <h2 data-i18n="dash_title">Tableau de bord — Résultats</h2>
+                    <p class="dash-subtitle" data-i18n="dash_subtitle">Interprétation clinique des questionnaires</p>
+                </div>
+
+                <!-- Résumé rapide -->
+                <div class="dash-summary" id="dash-summary">
+                    <!-- Generated by JS -->
+                </div>
+
+                <!-- Graphique radar -->
+                <div class="dash-section">
+                    <h3 data-i18n="dash_overview">Vue d'ensemble</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-radar"></canvas>
+                    </div>
+                </div>
+
+                <!-- HAD-S détail -->
+                <div class="dash-section" id="dash-had">
+                    <h3>HAD-S — <span data-i18n="dash_had_title">Anxiété & Dépression</span></h3>
+                    <div class="chart-row">
+                        <div class="chart-half">
+                            <canvas id="chart-had-anxiety"></canvas>
+                        </div>
+                        <div class="chart-half">
+                            <canvas id="chart-had-depression"></canvas>
+                        </div>
+                    </div>
+                    <div id="had-interpretation" class="interpretation-box"></div>
+                </div>
+
+                <!-- ODI détail -->
+                <div class="dash-section" id="dash-odi">
+                    <h3>ODI — <span data-i18n="dash_odi_title">Incapacité fonctionnelle</span></h3>
+                    <div class="chart-container small">
+                        <canvas id="chart-odi"></canvas>
+                    </div>
+                    <div id="odi-interpretation" class="interpretation-box"></div>
+                </div>
+
+                <!-- TSK détail -->
+                <div class="dash-section" id="dash-tsk">
+                    <h3>TSK-17 — <span data-i18n="dash_tsk_title">Kinésiophobie</span></h3>
+                    <div class="chart-container small">
+                        <canvas id="chart-tsk"></canvas>
+                    </div>
+                    <div id="tsk-interpretation" class="interpretation-box"></div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="dash-actions">
+                    <button class="btn-primary" onclick="printDashboard()" data-i18n="btn_print">🖨️ Imprimer</button>
+                    <button class="btn-secondary" onclick="newEvaluation()" data-i18n="btn_new_eval">Nouvelle évaluation</button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="js/i18n.js"></script>
+    <script src="js/questionnaires.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
