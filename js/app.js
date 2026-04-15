@@ -1,5 +1,13 @@
 // App — Main navigation and questionnaire logic
 
+// Anti-scraping email obfuscation
+function sendMail(e) {
+    e.preventDefault();
+    const u = 'philippebanaszak';
+    const d = 'me.com';
+    window.location.href = 'mai' + 'lto:' + u + '@' + d;
+}
+
 // State
 let answers = { had: {}, odi: {}, tsk: {} };
 let questionnaireOrder = ['had', 'odi', 'tsk'];

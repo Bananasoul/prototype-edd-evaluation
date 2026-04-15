@@ -758,6 +758,17 @@ body {
     letter-spacing: 0.3px;
 }
 
+.footer-credit .email-link {
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: var(--transition);
+}
+
+.footer-credit .email-link:hover {
+    color: var(--primary);
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 640px) {
     .card {
