@@ -142,6 +142,8 @@ function renderHADQuestion(container, item, idx) {
 // ODI
 function renderODIQuestion(container, item, idx) {
     const selected = answers.odi[item.id];
+    const isSkipped = answers.odi[item.id] === 'skipped';
+    const skipLabel = currentLang === 'fr' ? 'Omettre cette section' : 'Diesen Abschnitt auslassen';
 
     container.innerHTML = `
         <p class="question-text">${item.title}</p>
@@ -154,6 +156,9 @@ function renderODIQuestion(container, item, idx) {
                 </button>
             `).join('')}
         </div>
+        <button class="btn-skip ${isSkipped ? 'skipped' : ''}" onclick="skipODIQuestion('${item.id}')">
+            ${isSkipped ? '✓ ' : ''}${skipLabel}
+        </button>
     `;
 }
 
@@ -196,6 +201,12 @@ function selectAnswer(qType, itemId, value, btn) {
             nextQuestion();
         }
     }, 350);
+}
+
+function skipODIQuestion(itemId) {
+    answers.odi[itemId] = 'skipped';
+    updateNextButton();
+    setTimeout(() => nextQuestion(), 250);
 }
 
 function canProceed() {
@@ -258,7 +269,7 @@ function calculateAllScores() {
     let odiAnswered = 0;
     data.odi.forEach(item => {
         const val = answers.odi[item.id];
-        if (val !== undefined) {
+        if (val !== undefined && val !== 'skipped') {
             odiSum += val;
             odiAnswered++;
         }

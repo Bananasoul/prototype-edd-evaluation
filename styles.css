@@ -536,6 +536,34 @@ body {
     font-weight: 600;
 }
 
+/* Skip button */
+.btn-skip {
+    display: block;
+    margin: 16px auto 0;
+    padding: 8px 20px;
+    background: none;
+    border: 1px dashed var(--text-muted);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.btn-skip:hover {
+    border-color: var(--warning);
+    color: var(--warning);
+    background: var(--warning-light);
+}
+
+.btn-skip.skipped {
+    border-color: var(--warning);
+    color: var(--warning);
+    background: var(--warning-light);
+    border-style: solid;
+}
+
 /* Navigation */
 .q-nav {
     display: flex;
