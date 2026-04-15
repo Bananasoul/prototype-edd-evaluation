@@ -5,7 +5,11 @@ function sendMail(e) {
     e.preventDefault();
     const u = 'philippebanaszak';
     const d = 'me.com';
-    window.location.href = 'mai' + 'lto:' + u + '@' + d;
+    const a = document.createElement('a');
+    a.href = 'mai' + 'lto:' + u + '@' + d;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 
 // State
