@@ -747,6 +747,17 @@ body {
     padding-top: 20px;
 }
 
+/* ===== FOOTER CREDIT ===== */
+.footer-credit {
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    letter-spacing: 0.3px;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 640px) {
     .card {
