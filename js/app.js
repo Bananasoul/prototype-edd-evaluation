@@ -241,13 +241,18 @@ function calculateAllScores() {
         }
     });
 
-    // ODI
+    // ODI (formule standard : si section omise, diviser par le max réel)
     let odiSum = 0;
+    let odiAnswered = 0;
     data.odi.forEach(item => {
         const val = answers.odi[item.id];
-        if (val !== undefined) odiSum += val;
+        if (val !== undefined) {
+            odiSum += val;
+            odiAnswered++;
+        }
     });
-    const odiPercent = Math.round((odiSum / 50) * 100);
+    const odiMaxPossible = odiAnswered * 5;
+    const odiPercent = odiMaxPossible > 0 ? Math.round((odiSum / odiMaxPossible) * 100) : 0;
 
     // TSK
     let tskTotal = 0;
@@ -268,6 +273,8 @@ function calculateAllScores() {
         },
         odi: {
             sum: odiSum,
+            maxPossible: odiMaxPossible,
+            answered: odiAnswered,
             percent: odiPercent,
             level: getODILevel(odiPercent)
         },

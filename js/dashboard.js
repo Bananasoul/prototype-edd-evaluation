@@ -289,8 +289,11 @@ function renderODIChart(scores) {
     // Interpretation
     const interpBox = document.getElementById('odi-interpretation');
     interpBox.className = `interpretation-box ${scores.odi.level.color}`;
+    const odiDetail = scores.odi.answered < 10
+        ? ` (${scores.odi.answered}/10 sections)`
+        : '';
     interpBox.innerHTML = `
-        <strong>${scores.odi.level.label} — ${scores.odi.sum}/50 (${scores.odi.percent}%)</strong>
+        <strong>${scores.odi.level.label} — ${scores.odi.sum}/${scores.odi.maxPossible} (${scores.odi.percent}%)${odiDetail}</strong>
         <p>${scores.odi.level.desc}</p>
     `;
 }
